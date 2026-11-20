@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRIME CAPITAL</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080d0a;color:#f1f5f2;font-family:Arial,sans-serif;padding-bottom:85px}
+header{padding:24px 20px;border-bottom:1px solid #1d3025;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:21px;font-weight:800;letter-spacing:1px}
+.logo span{color:#20c77a}
+.tag{color:#20c77a;font-size:10px;letter-spacing:2px}
+main{padding:20px;max-width:600px;margin:auto}
+h2{font-size:19px}
+.balance{background:linear-gradient(135deg,#10251a,#0b120e);border:1px solid #245239;border-radius:18px;padding:23px;margin-top:20px}
+.muted{color:#87988d;font-size:12px}
+.amount{font-size:32px;font-weight:700;margin:12px 0}
+.green{color:#29d786}
+.actions{display:flex;gap:10px;margin-top:22px}
+button{border:0;border-radius:11px;padding:14px;color:white;background:#168b52;font-weight:700;font-size:14px;cursor:pointer}
+.actions button{flex:1}
+.secondary{background:#1b2b21;border:1px solid #31513c}
+.card{background:#101914;border:1px solid #20352a;border-radius:15px;padding:17px;margin-top:13px}
+.asset{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.asset p{margin:6px 0;color:#899a8e;font-size:12px}
+.asset button{padding:10px 14px}
+section{display:none}
+section.active{display:block}
+nav{position:fixed;bottom:0;left:0;right:0;background:#0d1510;border-top:1px solid #23382b;display:flex;justify-content:space-around;padding:13px 4px}
+nav button{background:transparent;color:#91a096;font-size:11px;padding:8px}
+nav button.active{color:#29d786}
+input{width:100%;padding:14px;margin:12px 0;background:#0a110c;border:1px solid #31513c;border-radius:10px;color:white}
+.modal{display:none;position:fixed;inset:0;background:#000c;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modalbox{background:#111c15;border:1px solid #31513c;border-radius:17px;padding:23px;width:100%;max-width:380px}
+.modalbox button{width:100%;margin-top:10px}
+.close{background:#26352b}
+.notice{font-size:11px;color:#899a8e;line-height:1.5;margin-top:20px}
+</style>
+</head>
+<body>
+<header>
+<div>
+<div class="logo">PRIME <span>CAPITAL</span></div>
+<div class="tag">INVESTMENT PLATFORM</div>
+</div>
+<div class="green">● ONLINE</div>
+</header>
+<main>
+<section id="home" class="active">
+<h2>Главная панель</h2>
+<div class="balance">
+<div class="muted">СТОИМОСТЬ ПОРТФЕЛЯ</div>
+<div class="amount">₽ 0.00</div>
+<div class="green">Ваш инвестиционный кабинет</div>
+<div class="actions">
+<button onclick="openModal('deposit')">＋ Пополнить</button>
+<button class="secondary" onclick="openModal('withdraw')">Вывести</button>
+</div>
+</div>
+<h2>Инвестиционные активы</h2>
+<div class="card asset">
+<div><b>Недвижимость</b><p>Инвестиции в недвижимые активы</p></div>
+<button onclick="details('Недвижимость')">Подробнее</button>
+</div>
+<div class="card asset">
+<div><b>Драгоценные металлы</b><p>Золото и другие металлы</p></div>
+<button onclick="details('Драгоценные металлы')">Подробнее</button>
+</div>
+<div class="card asset">
+<div><b>Бизнес-проекты</b><p>Долевое участие в проектах</p></div>
+<button onclick="details('Бизнес-проекты')">Подробнее</button>
+</div>
+</section>
+
+<section id="portfolio">
+<h2>Мой портфель</h2>
+<div class="balance">
+<div class="muted">ТЕКУЩИЙ БАЛАНС</div>
+<div class="amount">₽ 0.00</div>
+<p class="muted">Реальные инвестиции появятся после подключения юридически разрешённых финансовых операций.</p>
+</div>
+</section>
+
+<section id="history">
+<h2>История операций</h2>
+<div class="card" id="historyList">Операций пока нет.</div>
+</section>
+
+<section id="profile">
+<h2>Личный кабинет</h2>
+<div class="card">
+<b>PRIME CAPITAL USER</b>
+<p class="muted">Telegram Mini App</p>
+<p id="userId">Ожидание авторизации Telegram</p>
+</div>
+<div class="card">
+Безопасность аккаунта<br><br>
+<span class="green">● Защищённое соединение</span>
+</div>
+</section>
+<p class="notice">PRIME CAPITAL. Демонстрационная версия интерфейса. Баланс не является денежным остатком, кнопки пополнения и вывода пока не проводят платежи. Инвестиционные предложения требуют юридического оформления.</p>
+</main>
+
+<nav>
+<button class="active" onclick="tab('home',this)">⌂<br>Главная</button>
+<button onclick="tab('portfolio',this)">▣<br>Портфель</button>
+<button onclick="tab('history',this)">◷<br>История</button>
+<button onclick="tab('profile',this)">♙<br>Профиль</button>
+</nav>
+
+<div class="modal" id="modal">
+<div class="modalbox">
+<h2 id="modalTitle">Операция</h2>
+<p class="muted" id="modalText"></p>
+<input id="amountInput" type="number" min="1" placeholder="Сумма в рублях">
+<button onclick="submitRequest()">Отправить заявку</button>
+<button class="close" onclick="closeModal()">Закрыть</button>
+</div>
+</div>
+
+<script>
+let operation='';
+function tab(id,btn){
+document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+}
+function openModal(type){
+operation=type;
+document.getElementById('modalTitle').textContent=type==='deposit'?'Пополнение':'Заявка на вывод';
+document.getElementById('modalText').textContent='Демонстрационная форма. Реальные платежи пока отключены.';
+document.getElementById('amountInput').value='';
+document.getElementById('modal').classList.add('show');
+}
+function closeModal(){
+document.getElementById('modal').classList.remove('show');
+}
+function submitRequest(){
+let amount=Number(document.getElementById('amountInput').value);
+if(!amount||amount<=0){alert('Введите корректную сумму');return;}
+alert('Демонстрация: реальные денежные операции пока не подключены.');
+closeModal();
+}
+function details(name){
+alert(name+': информация об активе появится после настройки инвестиционного каталога.');
+}
+if(window.Telegram&&window.Telegram.WebApp){
+Telegram.WebApp.ready();
+Telegram.WebApp.expand();
+let u=Telegram.WebApp.initDataUnsafe.user;
+if(u)document.getElementById('userId').textContent='ID: '+u.id;
+}
+</script>
+</body>
+</html>
